@@ -86,34 +86,3 @@
 * **Crawler-Modul:** Isolierter Service zur semantischen Aufbereitung von Webseiten.
 * **Mangools-Connector:** Liefert Keyword-Metriken zur Entscheidungsfindung.
 * **Supabase:** Zentraler Datenspeicher (PostgreSQL) mit Tabellen wie `projects`, `keywords` und `blog_posts`.
-
----
-
-## 4. Vorgehen mit KI (KI-supported Development)
-
-Gemäß der Projektmethodik wird KI sowohl zur Textgenerierung innerhalb der Applikation als auch als Werkzeug während der Entwicklung strukturiert eingesetzt.
-
-### 4.1 Prompt-Strukturierung
-
-Für alle LLM-Interaktionen gilt das Prinzip der klaren Rollen- und Aufgabentrennung:
-
-$$\text{Gesamt-Prompt} = \text{System Prompt} + \text{User Prompt}$$
-
-* **System Prompt:** Definiert das feste Verhalten, Qualitätsstandards und Restriktionen.
-  * *Beispiel:* „Du bist ein Senior-SEO-Copywriter. Erstelle strukturierte Fachartikel im Markdown-Format. Verwende H2- und H3-Gliederungen und integriere das Haupt-Keyword natürlich.“
-* **User Prompt:** Liefert ausschließlich die variablen Nutzdaten.
-  * *Beispiel:* Extrahierte Webseiteninhalte, Ziel-Keywords aus Mangools und gewünschte Wortanzahl.
-
-### 4.2 Kontextdateien für die Entwicklung
-Zur Sicherung einer einheitlichen Codebasis und zur Anleitung des KI-Coding-Assistenten werden Projektrichtlinien gepflegt:
-
-* **`dev.md`:** 
-  * Definition des Technologie-Stacks (Supabase JS Client, Crawler-Libraries, UI-Frameworks).
-  * Coding-Conventions, Schnittstellendefinitionen und Fehlerbehandlung.
-* **`test.md`:** 
-  * Validierungsregeln für generierten Content (Vorhandensein aller Pflichtfelder, Markdown-Konformität).
-  * Testfälle für die Supabase-REST-Endpoints.
-
-### 4.3 Wirtschaftlichkeit und Qualitätsmetriken
-* **Token-Optimierung:** Striktes Bereinigen von HTML-Markup vor dem Senden an das Modell spart Kosten und verhindert Kontextüberläufe.
-* **Qualitätsziel (ca. 90 %):** Die KI liefert die strukturierte Rohfassung. Eine abschließende redaktionelle Prüfung und Freigabe im Frontend stellt die finale inhaltliche Richtigkeit sicher.
