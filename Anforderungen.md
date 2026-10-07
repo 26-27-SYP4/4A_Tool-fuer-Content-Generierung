@@ -1,87 +1,76 @@
-# Was macht der Kunde
+# Anforderungen: SEO-Blog-Generierung
 
-SEO-Blog-Werkstatt · HTL Grieskirchen · Oct 7, 2026
+## 1. Funktionale Anforderungen 
 
-## Wer ist der Kunde
+### 1.1 Tool
+* **FA-01 Benutzer-Authentifizierung:** Login für Nutzer (Agentur/Admin) über Supabase Auth.
+* **FA-02 Kundenverwaltung:** Anlegen von Kunden mit Pflichtfeldern (Name, Website-URL) und optionalen Feldern (Ansprache, Tonalität).
+* **FA-03 Web-Crawler:** 
+  * Crawlen der Kunden-Domain (max. 50 Seiten).
+  * Beachtung der `robots.txt`.
+  * Ratenlimitierung: maximal 1 Anfrage pro Sekunde.
+  * Extraktion von HTML-Titel, Überschriften und Textinhalt.
+* **FA-04 KI-Profilierung (Prompt 1):** Generierung von Unternehmensprofilen (Branche, Region, Leistungen, Zielgruppe, Startbegriffe, Marken) im JSON-Format auf Basis der gecrawlten Texte mittels Gemini API.
+* **FA-05 Keyword-Recherche (Mangools API):**
+  * Abruf von bis zu 200 verwandten Keywords pro Startbegriff (`/kwfinder/related-keywords`).
+  * Abruf der SEO-Schwierigkeit für Top-3-Keywords nach Volumen (`/kwfinder/serps`).
+  * Automatisches Wiederholen bei HTTP 429 (`retry_after` beachten).
+  * Harte Grenze: Maximal 9 Mangools-API-Aufrufe pro Durchlauf.
+* **FA-06 Keyword-Filterung (Vorauswahl):** Ausschluss von Keywords nach folgenden Kriterien:
+  * Suchvolumen < 20.
+  * Schwierigkeit > 30.
+  * Enthält Marken der Konkurrenz.
+  * Enthält Kaufabsicht (Ausnahme: "kosten", "preis").
+  * Bereits bedient (Überschneidung mit Crawl-Daten).
+  * Bereits in einem anderen Beitrag verwendet.
+* **FA-07 KI-Content-Erstellung (Prompt 2):** Generierung eines SEO-Blogbeitrags im JSON-Format mittels Gemini API (inkl. Websuche) mit folgenden Elementen:
+  * Gewähltes Keyword, Titel, Slug, Meta-Titel, Meta-Beschreibung, Auszug.
+  * Text-Inhalt gegliedert in exakt 5 erlaubte Block-Typen: `heading` (H2/H3), `text` (mit Markdown fett/kursiv/link), `image`, `list` (bullet/number, 2-12 Items), `faq`.
+  * Bild-Prompts für die Generierung.
+* **FA-08 KI-Bildgenerierung:** Erzeugung von Symbolbildern via Gemini API anhand der Prompts aus FA-07.
+* **FA-09 Editor & Beitragsverwaltung:**
+  * Bearbeiten aller generierten Blöcke (Texte ändern, Blöcke verschieben).
+  * Bilder neu erzeugen lassen.
+  * Workflow-Status ändern (`entwurf` zu `veroeffentlicht`).
 
-Unser Auftraggeber ist die KRUG software solutions GmbH aus Grieskirchen. Sie lässt uns ein Werkzeug bauen, mit dem sie für Firmen-Websites automatisch SEO-Blogbeiträge erstellt.
+### 1.2 Testseite (seitlich.at)
+* **FA-10 Dynamischer Blog-Abruf:** Abrufen der freigegebenen Beiträge (`status = 'veroeffentlicht'`) direkt aus der Supabase-Datenbank bei jedem Seitenaufruf (kein Caching).
+* **FA-11 Blog-Übersicht:** Darstellung aller Blogbeiträge unter `/blog` mit Titel, Auszug und Cover-Bild.
+* **FA-12 Beitrags-Detailseite:**
+  * Darstellung der URL via Slug (z.B. `/blog/holztisch-pflegen`).
+  * Fehlerfreies Rendern der 5 Block-Typen in HTML.
+  * SEO-Integration: Ausgabe von Meta-Titel (`<title>`) und Meta-Beschreibung (`<meta name="description">`).
+  * Schema-Integration: Ausgabe der FAQ-Daten als strukturiertes JSON-LD (FAQPage) für Google.
+* **FA-13 Standard-Seiten:** Bereitstellung einer Startseite, 3 Leistungsseiten, Über uns und Kontaktseite (mit passendem Inhalt für einen erfundenen Betrieb).
 
-| Angabe | Wert |
-| --- | --- |
-| Firma | KRUG software solutions GmbH |
-| Adresse | Roßmarkt 18, 4710 Grieskirchen |
-| Ansprechpartner | Jonas Kreuzhuber, Michael Gründlinger |
-| Kontakt | office@krugware.com, +43 677 63079600 |
-| Website | www.krugware.com |
+---
 
-Wichtig für die Begriffe: KRUG ist **unser** Kunde. Im Tool heißt "Kunde" aber die Firma, für die Beiträge entstehen, zum Beispiel die Tischlerei aus dem Beispiel. Diese Firmen sind KRUGs Kunden und landen in der Tabelle `kunden`.
+## 2. Nicht-funktionale Anforderungen 
 
-## Ausgangslage
+### 2.1 Technologie-Stack
+* **NFA-01 Framework:** Nutzung von Next.js mit TypeScript für beide Applikationen (Tool und Testseite).
+* **NFA-02 Backend/Datenbank:** Supabase (PostgreSQL, Storage, Auth). Strukturierung in 6 vorgegebene Tabellen (`kunden`, `crawl_seiten`, `suchbegriffe`, `vorlagen`, `beitraege`, `bilder`).
 
-KRUG will für Firmen-Websites regelmäßig Blogbeiträge liefern, die bei Google gefunden werden. Heute kostet das viel Handarbeit: Website lesen, passende Suchbegriffe finden, Zahlen dazu prüfen, Text schreiben, Bilder besorgen, online stellen.
+### 2.2 Daten & Medien
+* **NFA-03 Bildformat & Speicherung:** Generierte Bilder müssen im WebP-Format in zwei Breiten (800px und 1600px) im Supabase Storage-Bucket `blog-images` unter dem Pfad `{kunde_id}/{beitrag_id}/...` abgelegt werden.
+* **NFA-04 Datenintegrität:** Eindeutigkeit des Slugs und des Keywords pro Kunde; Einhaltung der Tabellen-Beziehungen (Primary/Foreign Keys).
 
-Das Ziel ist ein Werkzeug, das diese Schritte zusammenhängend erledigt. Der Mensch bleibt nur dort, wo Urteil gebraucht wird: beim Prüfen, Bearbeiten und Freigeben des Beitrags.
+### 2.3 KI & Content-Einschränkungen
+* **NFA-05 Fehlerkorrektur:** Bei fehlerhaftem JSON der KI muss die Anfrage einmal wiederholt werden, danach ist eine Fehlermeldung im UI auszugeben.
+* **NFA-06 Inhalts-Restriktionen:**
+  * Sprache: Österreichisches Deutsch (Tonalität/Ansprache laut Kunde).
+  * Keine Fakten-Halluzinationen (keine erfundenen Preise, Zahlen, Auszeichnungen).
+  * Bilder: Keine echten Personen, Logos oder nachgebauten Produkte.
+  * Typografie: Normale Bindestriche (keine langen Gedankenstriche).
+* **NFA-07 Längen-Beschränkungen:** Meta-Titel max. 60 Zeichen, Meta-Beschreibung max. 160 Zeichen, Titel max. 70 Zeichen, Slug nur a-z, 0-9 und Bindestrich. Mindestens 3 Blöcke pro Artikel.
 
-Dabei achtet KRUG auf zwei Dinge besonders:
+### 2.4 Infrastruktur & Deployment
+* **NFA-08 Build-Prozess:** 
+  * Das Tool muss mit Standard-Befehlen (`npm install`, `npm run build`, `npm start`) lauffähig sein.
+  * Die Testseite muss mit dem Cloudflare-Adapter (`@opennextjs/cloudflare`) gebaut werden und lokal via `npm run preview` testbar sein.
+* **NFA-09 Konfiguration:** Sämtliche API-Keys (Mangools, Gemini), URLs und IDs (z.B. `KUNDE_ID` für die Testseite) müssen über Umgebungsvariablen (`.env`) konfiguriert werden. Keine hardcodierten Secrets im Quellcode.
 
-- **Kosten:** Mangools-Aufrufe sind auf höchstens 9 pro Durchlauf begrenzt, und eine Vorauswahl im Code filtert Keywords, bevor die KI sie bekommt.
-- **Ehrlichkeit der Texte:** Die KI darf keine Preise, Zahlen oder Auszeichnungen erfinden, die nicht auf der Website der Firma stehen.
-
-## Was der Kunde mit dem System macht
-
-KRUG betreibt zwei Anwendungen: das Tool auf **seo.krugware.com** und eine Test-Firmenseite auf **seitlich.at**. Ein Mitarbeiter von KRUG macht pro Beitrag diesen Durchlauf:
-
-1. **Anmelden** im Tool (Supabase Auth).
-2. **Firma anlegen:** Name und URL eingeben, optional Ansprache und Tonalität (Standard: du, sachlich).
-3. **Website lesen lassen:** Der Crawler liest bis zu 50 Seiten der Firma, eine pro Sekunde, und beachtet robots.txt.
-4. **Profil prüfen:** Die KI erkennt Branche, Region, Leistungen, Zielgruppe, Marken der Konkurrenz und 3 bis 5 Startbegriffe.
-5. **Keywords bekommen:** Das Tool holt verwandte Keywords von Mangools, filtert sie und lädt für die besten 3 die Schwierigkeit nach.
-6. **Entwurf bekommen:** Die KI wählt ein Keyword und schreibt den Beitrag in festen Blöcken, inklusive Meta-Titel, Meta-Beschreibung und Bildern.
-7. **Bearbeiten:** Im Editor jeden Block ändern, Blöcke verschieben, Bilder neu erzeugen.
-8. **Freigeben:** Der Status wechselt auf veröffentlicht.
-9. **Ergebnis sehen:** Die Firmenseite zeigt den Beitrag sofort unter /blog, mit Meta-Daten und FAQ-Daten für Google.
-
-Beim nächsten Durchlauf für dieselbe Firma ist das schon verwendete Keyword gesperrt, so entstehen keine doppelten Beiträge.
-
-## Was der Kunde beisteuert und erwartet
-
-KRUG stellt die Schlüssel und übernimmt am Ende den Betrieb. Wir entwickeln alles lokal und übergeben den Code.
-
-| Bereich | KRUG | Wir |
-| --- | --- | --- |
-| Zugänge | Mangools- und Gemini-API-Schlüssel, GitHub-Account für die Abgabe | Eigenes Supabase-Projekt (Datenbank, Login, Storage) |
-| Technik | Gibt Next.js mit TypeScript vor | Bauen Tool und Testseite damit |
-| Testseite | Stellt sie auf seitlich.at online | Erfinden einen Betrieb: Startseite, 3 Leistungsseiten, Über uns, Kontakt, Blog |
-| Betrieb | Stellt das Tool auf seo.krugware.com online | Liefern lauffähigen Code |
-
-**Was KRUG bei der Abgabe prüft:**
-
-- Ein Git-Repository mit den Ordnern `tool/`, `testseite/` und `supabase/`.
-- README.md mit Node.js-Version, Startbefehlen und allen Umgebungsvariablen.
-- Je eine `.env.example` in `tool/` und `testseite/`, ohne Werte.
-- Supabase-Migrationen für alle Tabellen, RLS-Regeln und den Bucket `blog-images`, Vorlagen in `seed.sql`.
-- Tool läuft mit `npm install`, `npm run build`, `npm start`, ohne weitere Schritte.
-- Testseite baut mit `@opennextjs/cloudflare` und läuft mit `npm run preview`.
-- Keine Adressen oder Schlüssel im Code, nur Umgebungsvariablen.
-- Ein kompletter Durchlauf funktioniert auf einem leeren Supabase-Projekt.
-
-**Was KRUG an den Inhalten erwartet:** österreichisches Deutsch, nur die fünf Block-Typen, keine erfundenen Fakten, keine langen Gedankenstriche. Bilder ohne echte Personen, Logos oder nachgebaute Produkte der Firma.
-
-## Abgrenzung und offene Fragen
-
-**Nicht Teil des Auftrags:**
-
-- Kein CMS wie WordPress. Die Testseite liest direkt aus Supabase, bei jedem Aufruf, ohne Cache.
-- Keine eigene API für externe Websites und kein Hosting durch uns.
-- Keine weiteren Mangools-Endpunkte als die zwei vorgegebenen.
-- Nur Österreich und Deutsch (location\_id 2040, language\_id 1001).
-
-**Offene Fragen an KRUG:**
-
-- [ ] Welches Gemini-Modell sollen wir für Text und welches für Bilder verwenden?
-- [ ] Wie kommt ein Beitrag in den Status "offline"? Im Ablauf gibt es dafür keinen Schritt.
-- [ ] Wer darf sich im Tool registrieren: jeder, oder nur bestimmte E-Mail-Adressen?
-- [ ] Wie groß ist das tägliche Mangools-Kontingent, das wir zum Entwickeln nutzen dürfen?
-- [ ] Wofür setzt KRUG das Tool später ein, und für welche Art von Firmen? Öffentlich haben wir dazu nichts gefunden.
-
-Quelle: Projektvorgaben SEO-Blog-Werkstatt von KRUG, Stand 30.09.2026.
+### 2.5 Abgabe & Struktur
+* **NFA-10 Repository-Struktur:** Das Git-Repository muss in die drei Ordner `tool/`, `testseite/` und `supabase/` gegliedert sein.
+* **NFA-11 Dokumentation:** Bereitstellung einer `README.md` (Node-Version, Start-Befehle, Env-Liste) sowie `.env.example` Dateien.
+* **NFA-12 Datenbank-Initialisierung:** Bereitstellung von Supabase CLI Migrationen (`supabase/migrations`) für Schema und Policies (RLS) sowie einer `seed.sql` für Vorlagen.
