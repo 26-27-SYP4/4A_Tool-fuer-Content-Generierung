@@ -6,17 +6,17 @@
 ## 1. Ausgangslage & Zielsetzung (Kontext)
 
 ### 1.1 Wer ist der Kunde und was macht er?
-Unser Auftraggeber ist die KRUG software solutions GmbH aus Grieskirchen[cite: 1]. Das Unternehmen möchte Firmen-Websites regelmäßig mit suchmaschinenoptimierten Blogbeiträgen versorgen, damit diese bei Google besser gefunden werden[cite: 1].
+Unser Auftraggeber ist die KRUG software solutions GmbH aus Grieskirchen[cite: 1]. Das Unternehmen möchte Firmen-Websites regelmäßig mit suchmaschinenoptimierten Blogbeiträgen versorgen, damit diese in Suchmaschien besser gefunden werden können[cite: 1].
 
-Derzeit erfordert dieser Prozess sehr viel Handarbeit: Mitarbeiter müssen sich in die Website einlesen, passende Suchbegriffe recherchieren, dazugehörige Kennzahlen prüfen, Texte verfassen, Bilder besorgen und alles manuell online stellen[cite: 1]. 
+Derzeit erfordert dieser Prozess sehr viel Handarbeit: Mitarbeiter müssen sich in die Website einlesen, passende Keywords recherchieren, die relevants dieser prüfen, Texte selber verfassen, passende Bilder besorgen und alles manuell online zusammenstellen[cite: 1]. 
 
-Das Ziel ist ein einheitliches Werkzeug, das diese Schritte automatisiert[cite: 1]. Der Mensch soll nur noch dort eingesetzt werden, wo Urteilsvermögen gefragt ist: beim Prüfen, Bearbeiten und Freigeben der erstellten Beiträge[cite: 1]. Zwei Vorgaben sind der KRUG software solutions GmbH dabei besonders wichtig:
+Das Ziel ist ein Tool, das diese Schritte automatisiert[cite: 1]. Der Mitarbeiter soll nur noch dort eingesetzt werden, wo Urteilsvermögen gefragt ist: beim Prüfen und Freigeben der erstellten Blog-Beiträge[cite: 1]. Zwei Vorgaben sind der KRUG software solutions GmbH dabei besonders wichtig:
 *   **Kosteneffizienz:** Automatisierte Abfragen bei externen Anbietern für Suchbegriffe müssen stark limitiert und im Vorfeld gefiltert werden[cite: 1].
 *   **Wahrheitstreue der Texte:** Die automatisierte Texterstellung darf keine Preise, Zahlen oder Auszeichnungen erfinden, die nicht tatsächlich auf der Website der betroffenen Firma stehen[cite: 1].
 
 ### 1.2 Ist-Zustand
 *   Die regelmäßige Pflege und Aktualisierung von Kunden-Websites mit SEO-Blogbeiträgen erfordert einen hohen manuellen Recherche- und Schreibaufwand.
-*   Die Recherche von Suchbegriffen und die inhaltliche Ausrichtung an die Branche des Kunden geschehen derzeit fragmentiert und unverbunden in unterschiedlichen Programmen.
+*   Die Recherche von Suchbegriffen und die inhaltliche Ausrichtung an die Branche des Kunden geschehen derzeit geteilt in unterschiedlichen Programmen.
 *   Es fehlt ein durchgängiger Arbeitsablauf von der ersten Webseitenanalyse bis zur direkten Bereitstellung des fertigen Textes.
 
 ### 1.3 Soll-Zustand
