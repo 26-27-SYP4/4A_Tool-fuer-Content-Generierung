@@ -4,7 +4,7 @@
 
 ### 1.1 Tool
 * **FA-01 Benutzer-Authentifizierung:** Login für Nutzer (Agentur/Admin) über Supabase Auth.
-* **FA-02 Kundenverwaltung:** Anlegen von Kunden mit Pflichtfeldern (Name, Website-URL) und optionalen Feldern (Ansprache, Tonalität).
+* **FA-02 Kundenverwaltung:** Anlegen von Kunden mit Pflichtfeldern (Kundenname, Kundenwebsite-URL) aber auch optionalen Feldern (zb. Ansprache, Tonalität).
 * **FA-03 Web-Crawler:** 
   * Crawlen der Kunden-Domain (max. 50 Seiten).
   * Beachtung der `robots.txt`.
@@ -47,30 +47,26 @@
 
 ## 2. Nicht-funktionale Anforderungen 
 
-### 2.1 Technologie-Stack
-* **NFA-01 Framework:** Nutzung von Next.js mit TypeScript für beide Applikationen (Tool und Testseite).
-* **NFA-02 Backend/Datenbank:** Supabase (PostgreSQL, Storage, Auth). Strukturierung in 6 vorgegebene Tabellen (`kunden`, `crawl_seiten`, `suchbegriffe`, `vorlagen`, `beitraege`, `bilder`).
+### 2.1 Daten & Medien
+* **NFA-01 Bildformat & Speicherung:** Generierte Bilder müssen im WebP-Format in zwei Breiten (800px und 1600px) im Supabase Storage-Bucket `blog-images` unter dem Pfad `{kunde_id}/{beitrag_id}/...` abgelegt werden.
+* **NFA-02 Datenintegrität:** Eindeutigkeit des Slugs und des Keywords pro Kunde; Einhaltung der Tabellen-Beziehungen (Primary/Foreign Keys).
 
-### 2.2 Daten & Medien
-* **NFA-03 Bildformat & Speicherung:** Generierte Bilder müssen im WebP-Format in zwei Breiten (800px und 1600px) im Supabase Storage-Bucket `blog-images` unter dem Pfad `{kunde_id}/{beitrag_id}/...` abgelegt werden.
-* **NFA-04 Datenintegrität:** Eindeutigkeit des Slugs und des Keywords pro Kunde; Einhaltung der Tabellen-Beziehungen (Primary/Foreign Keys).
-
-### 2.3 KI & Content-Einschränkungen
-* **NFA-05 Fehlerkorrektur:** Bei fehlerhaftem JSON der KI muss die Anfrage einmal wiederholt werden, danach ist eine Fehlermeldung im UI auszugeben.
-* **NFA-06 Inhalts-Restriktionen:**
+### 2.2 KI & Content-Einschränkungen
+* **NFA-03 Fehlerkorrektur:** Bei fehlerhaftem JSON der KI muss die Anfrage einmal wiederholt werden, danach ist eine Fehlermeldung im UI auszugeben.
+* **NFA-04 Inhalts-Restriktionen:**
   * Sprache: Österreichisches Deutsch (Tonalität/Ansprache laut Kunde).
   * Keine Fakten-Halluzinationen (keine erfundenen Preise, Zahlen, Auszeichnungen).
   * Bilder: Keine echten Personen, Logos oder nachgebauten Produkte.
   * Typografie: Normale Bindestriche (keine langen Gedankenstriche).
-* **NFA-07 Längen-Beschränkungen:** Meta-Titel max. 60 Zeichen, Meta-Beschreibung max. 160 Zeichen, Titel max. 70 Zeichen, Slug nur a-z, 0-9 und Bindestrich. Mindestens 3 Blöcke pro Artikel.
+* **NFA-05 Längen-Beschränkungen:** Meta-Titel max. 60 Zeichen, Meta-Beschreibung max. 160 Zeichen, Titel max. 70 Zeichen, Slug nur a-z, 0-9 und Bindestrich. Mindestens 3 Blöcke pro Artikel.
 
-### 2.4 Infrastruktur & Deployment
-* **NFA-08 Build-Prozess:** 
+### 2.3 Infrastruktur & Deployment
+* **NFA-06 Build-Prozess:** 
   * Das Tool muss mit Standard-Befehlen (`npm install`, `npm run build`, `npm start`) lauffähig sein.
   * Die Testseite muss mit dem Cloudflare-Adapter (`@opennextjs/cloudflare`) gebaut werden und lokal via `npm run preview` testbar sein.
-* **NFA-09 Konfiguration:** Sämtliche API-Keys (Mangools, Gemini), URLs und IDs (z.B. `KUNDE_ID` für die Testseite) müssen über Umgebungsvariablen (`.env`) konfiguriert werden. Keine hardcodierten Secrets im Quellcode.
+* **NFA-07 Konfiguration:** Sämtliche API-Keys (Mangools, Gemini), URLs und IDs (z.B. `KUNDE_ID` für die Testseite) müssen über Umgebungsvariablen (`.env`) konfiguriert werden. Keine hardcodierten Secrets im Quellcode.
 
-### 2.5 Abgabe & Struktur
-* **NFA-10 Repository-Struktur:** Das Git-Repository muss in die drei Ordner `tool/`, `testseite/` und `supabase/` gegliedert sein.
-* **NFA-11 Dokumentation:** Bereitstellung einer `README.md` (Node-Version, Start-Befehle, Env-Liste) sowie `.env.example` Dateien.
-* **NFA-12 Datenbank-Initialisierung:** Bereitstellung von Supabase CLI Migrationen (`supabase/migrations`) für Schema und Policies (RLS) sowie einer `seed.sql` für Vorlagen.
+### 2.4 Abgabe & Struktur
+* **NFA-08 Repository-Struktur:** Das Git-Repository muss in die drei Ordner `tool/`, `testseite/` und `supabase/` gegliedert sein.
+* **NFA-09 Dokumentation:** Bereitstellung einer `README.md` (Node-Version, Start-Befehle, Env-Liste) sowie `.env.example` Dateien.
+* **NFA-10 Datenbank-Initialisierung:** Bereitstellung von Supabase CLI Migrationen (`supabase/migrations`) für Schema und Policies (RLS) sowie einer `seed.sql` für Vorlagen.
