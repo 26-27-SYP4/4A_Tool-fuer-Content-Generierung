@@ -2,9 +2,7 @@
 
 | Projekt | Automatisierte SEO-Blog-Erstellung für Kunden-Websites |
 | :--- | :--- |
-| **Fachbereich** | Softwareentwicklung / SYP |
 | **Status** | In Ausarbeitung / Vorlage |
-| **Tech-Stack (geplant)** | Frontend (z. B. Next.js/React), Supabase, LLM-API, Mangools API, Web-Crawler |
 
 ---
 
