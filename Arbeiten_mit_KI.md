@@ -1,6 +1,6 @@
 # Arbeiten mit KI
 
-SEO-Blog-Werkstatt · HTL Grieskirchen · Oct 7, 2026 · @Batuhan Demiryürek
+SEO-Blog-Werkstatt · HTL Grieskirchen · Oct 7, 2026
 
 KI hilft uns beim Planen, Programmieren, Fehlersuchen, Prüfen und Dokumentieren. Die Verantwortung für jede Zeile Code bleibt aber bei uns.
 
