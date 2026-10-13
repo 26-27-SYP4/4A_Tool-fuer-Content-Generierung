@@ -1,72 +1,25 @@
-# Anforderungen: SEO-Blog-Generierung
+# Anforderungen: SEO-Blog-Werkstatt (KRUG software solutions Gmb
 
-## 1. Funktionale Anforderungen 
+## 1. Funktionale Anforderungen (Tool & Editor)
 
-### 1.1 Tool
-* **FA-01 Benutzer-Authentifizierung:** Login für Nutzer (Agentur/Admin) über Supabase Auth.
-* **FA-02 Kundenverwaltung:** Anlegen von Kunden mit Pflichtfeldern (Kundenname, Kundenwebsite-URL) aber auch optionalen Feldern (zb. Ansprache, Tonalität).
-* **FA-03 Web-Crawler:** 
-  * Crawlen der Kunden-Domain (max. 50 Seiten).
-  * Beachtung der `robots.txt`.
-  * Ratenlimitierung: maximal 1 Anfrage pro Sekunde.
-  * Extraktion von HTML-Titel, Überschriften und Textinhalt.
-* **FA-04 KI-Profilierung (Prompt 1):** Generierung von Unternehmensprofilen (Branche, Region, Leistungen, Zielgruppe, Startbegriffe, Marken) im JSON-Format auf Basis der gecrawlten Texte mittels Gemini API.
-* **FA-05 Keyword-Recherche (Mangools API):**
-  * Abruf von bis zu 200 verwandten Keywords pro Startbegriff (`/kwfinder/related-keywords`).
-  * Abruf der SEO-Schwierigkeit für Top-3-Keywords nach Volumen (`/kwfinder/serps`).
-  * Automatisches Wiederholen bei HTTP 429 (`retry_after` beachten).
-  * Harte Grenze: Maximal 9 Mangools-API-Aufrufe pro Durchlauf.
-* **FA-06 Keyword-Filterung (Vorauswahl):** Ausschluss von Keywords nach folgenden Kriterien:
-  * Suchvolumen < 20.
-  * Schwierigkeit > 30.
-  * Enthält Marken der Konkurrenz.
-  * Enthält Kaufabsicht (Ausnahme: "kosten", "preis").
-  * Bereits bedient (Überschneidung mit Crawl-Daten).
-  * Bereits in einem anderen Beitrag verwendet.
-* **FA-07 KI-Content-Erstellung (Prompt 2):** Generierung eines SEO-Blogbeitrags im JSON-Format mittels Gemini API (inkl. Websuche) mit folgenden Elementen:
-  * Gewähltes Keyword, Titel, Slug, Meta-Titel, Meta-Beschreibung, Auszug.
-  * Text-Inhalt gegliedert in exakt 5 erlaubte Block-Typen: `heading` (H2/H3), `text` (mit Markdown fett/kursiv/link), `image`, `list` (bullet/number, 2-12 Items), `faq`.
-  * Bild-Prompts für die Generierung.
-* **FA-08 KI-Bildgenerierung:** Erzeugung von Symbolbildern via Gemini API anhand der Prompts aus FA-07.
-* **FA-09 Editor & Beitragsverwaltung:**
-  * Bearbeiten aller generierten Blöcke (Texte ändern, Blöcke verschieben).
-  * Bilder neu erzeugen lassen.
-  * Workflow-Status ändern (`entwurf` zu `veroeffentlicht`).
+*   **Benutzer- & Kundenverwaltung:** Das System benötigt einen sicheren Login (Supabase Auth) sowie eine Funktion zum Anlegen von Kundenprofilen mit den wichtigsten Eckdaten wie Name und Website-URL.
+*   **Web-Crawler:** Ein simples Crawler-Skript liest die Kunden-Website aus, damit die KI daraus später das Firmenprofil erstellen kann. Wichtig dabei: Der Crawler muss die robots.txt checken und darf maximal 1     Anfrage pro Sekunde machen (Rate-Limiting), um den fremden Server nicht zu überlasten.
+*   **Automatisierte SEO-Recherche:** 
+    *   Das Tool erstellt über die Gemini API zunächst ein Unternehmensprofil und passenden Startbegriffe.
+    *   Anschließend ruft es über die Mangools API verwandte Keywords und deren Schwierigkeit und Suchvolumen ab.
+    *   Unpassende Begriffe (z.B. Konkurrenzmarken) werden systemseitig automatisch aussortiert.
+*   **KI-Content- & Bildgenerierung:** Auf Basis des gewählten Keywords generiert die Gemini API einen vollständigen Blogbeitrag (Titel, SEO-Metadaten und strukturierten Text) sowie passende Symbolbilder. Der Text darf ausschließlich aus Überschriften, Absätzen, Bildern, Listen und FAQ-Blöcken bestehen.
+*   **Inhalts-Editor:** Nutzer können die generierten Beitragsblöcke bearbeiten, verschieben, Bilder neu erzeugen lassen und den Beitrag abschließend veröffentlichen.
 
-### 1.2 Testseite (seitlich.at)
-* **FA-10 Dynamischer Blog-Abruf:** Abrufen der freigegebenen Beiträge (`status = 'veroeffentlicht'`) direkt aus der Supabase-Datenbank bei jedem Seitenaufruf (kein Caching).
-* **FA-11 Blog-Übersicht:** Darstellung aller Blogbeiträge unter `/blog` mit Titel, Auszug und Cover-Bild.
-* **FA-12 Beitrags-Detailseite:**
-  * Darstellung der URL via Slug (z.B. `/blog/holztisch-pflegen`).
-  * Fehlerfreies Rendern der 5 Block-Typen in HTML.
-  * SEO-Integration: Ausgabe von Meta-Titel (`<title>`) und Meta-Beschreibung (`<meta name="description">`).
-  * Schema-Integration: Ausgabe der FAQ-Daten als strukturiertes JSON-LD (FAQPage) für Google.
-* **FA-13 Standard-Seiten:** Bereitstellung einer Startseite, 3 Leistungsseiten, Über uns und Kontaktseite (mit passendem Inhalt für einen erfundenen Betrieb).
+## 2. Funktionale Anforderungen (Testseite )
 
----
+*   **Dynamische Blog-Anbindung:** Die Next.js-Testseite lädt veröffentlichte Beiträge bei jedem Seitenaufruf echtzeit aus der Supabase-Datenbank.
+*   **Darstellung & SEO:** Die Beitrags-Detailseiten rendern die Inhaltsblöcke fehlerfrei in HTML und geben zwingend SEO-Tags (Meta-Titel, Meta-Beschreibung) sowie Schema.org-Daten (für die FAQs) an Suchmaschinen aus.
+*   **Basis-Webpräsenz:** Neben dem Blog umfasst die Seite grundlegende Unternehmens-Ansichten (Startseite, Leistungen, Über uns, Kontakt) für einen fiktiven Betrieb.
 
-## 2. Nicht-funktionale Anforderungen 
+## 3. Nicht-funktionale Anforderungen
 
-### 2.1 Daten & Medien
-* **NFA-01 Bildformat & Speicherung:** Generierte Bilder müssen im WebP-Format in zwei Breiten (800px und 1600px) im Supabase Storage-Bucket `blog-images` unter dem Pfad `{kunde_id}/{beitrag_id}/...` abgelegt werden.
-* **NFA-02 Datenintegrität:** Eindeutigkeit des Slugs und des Keywords pro Kunde; Einhaltung der Tabellen-Beziehungen (Primary/Foreign Keys).
-
-### 2.2 KI & Content-Einschränkungen
-* **NFA-03 Fehlerkorrektur:** Bei fehlerhaftem JSON der KI muss die Anfrage einmal wiederholt werden, danach ist eine Fehlermeldung im UI auszugeben.
-* **NFA-04 Inhalts-Restriktionen:**
-  * Sprache: Österreichisches Deutsch (Tonalität/Ansprache laut Kunde).
-  * Keine Fakten-Halluzinationen (keine erfundenen Preise, Zahlen, Auszeichnungen).
-  * Bilder: Keine echten Personen, Logos oder nachgebauten Produkte.
-  * Typografie: Normale Bindestriche (keine langen Gedankenstriche).
-* **NFA-05 Längen-Beschränkungen:** Meta-Titel max. 60 Zeichen, Meta-Beschreibung max. 160 Zeichen, Titel max. 70 Zeichen, Slug nur a-z, 0-9 und Bindestrich. Mindestens 3 Blöcke pro Artikel.
-
-### 2.3 Infrastruktur & Deployment
-* **NFA-06 Build-Prozess:** 
-  * Das Tool muss mit Standard-Befehlen (`npm install`, `npm run build`, `npm start`) lauffähig sein.
-  * Die Testseite muss mit dem Cloudflare-Adapter (`@opennextjs/cloudflare`) gebaut werden und lokal via `npm run preview` testbar sein.
-* **NFA-07 Konfiguration:** Sämtliche API-Keys (Mangools, Gemini), URLs und IDs (z.B. `KUNDE_ID` für die Testseite) müssen über Umgebungsvariablen (`.env`) konfiguriert werden. Keine hardcodierten Secrets im Quellcode.
-
-### 2.4 Abgabe & Struktur
-* **NFA-08 Repository-Struktur:** Das Git-Repository muss in die drei Ordner `tool/`, `testseite/` und `supabase/` gegliedert sein.
-* **NFA-09 Dokumentation:** Bereitstellung einer `README.md` (Node-Version, Start-Befehle, Env-Liste) sowie `.env.example` Dateien.
-* **NFA-10 Datenbank-Initialisierung:** Bereitstellung von Supabase CLI Migrationen (`supabase/migrations`) für Schema und Policies (RLS) sowie einer `seed.sql` für Vorlagen.
+*   **Datenhaltung & Architektur:** Das relationale Supabase-Datenbankmodell muss eine saubere Zuordnung von Slugs und Keywords gewährleisten. Generierte Bilder sind zwingend platzsparend im WebP-Format (in 800px und 1600px) im Supabase Storage abzulegen.
+*   **Fehler- & Inhaltskontrolle:** Bei fehlschlagenden API-Abfragen (z.B. ungültiges JSON der KI oder Mangools Rate-Limits) führt das System automatische Wiederholungsversuche durch, bevor es dem Nutzer einen Fehler meldet. Die KI muss im österreichischen Deutsch schreiben und darf keine Fakten erfinden.
+*   **Infrastruktur & Sicherheit:** Alle API-Keys und sensiblen Konfigurationen werden ausschließlich über Umgebungsvariablen  verwaltet. Beide Anwendungen müssen mit Standard-Befehlen lauffähig sein.
+*   **Lieferobjekte:** Der Quellcode ist übersichtlich in die Bereiche `tool/`, `testseite/` und `supabase/` zu strukturieren. Supabase-Datenbankmigrationen und eine Projektdokumentation (`README.md`) sind Teil der Abgabe.
