@@ -20,6 +20,6 @@ Das Ziel ist ein Tool, das diese Schritte automatisiert. Der Mitarbeiter soll nu
 
 ### 1.3 Soll-Zustand
 *   Bereitstellung einer Plattform, die über die Eingabe einer Kunden-Website selbstständig bis zu 50 Unterseiten einliest und relevante Informationen erfasst. 
-*   Das System leitet aus diesen Informationen das Firmenprofil ab, findet automatisch relevante SEO-Suchbegriffe und reichert diese mit Kennzahlen zur Schwierigkeit an[cite: 1].
-*   Automatisierte Generierung von qualitativ hochwertigen Blogbeitrags-Entwürfen in festen Blöcken (inklusive Bildern) durch den Einsatz von Künstlicher Intelligenz[cite: 1].
-*   Zentrale Speicherung aller Entwürfe und Suchbegriffe in einer Datenbank, sodass die Kunden-Websites freigegebene Beiträge völlig automatisiert beziehen und sofort anzeigen können[cite: 1].
+*   Das System leitet aus diesen Informationen das Firmenprofil ab, findet automatisch relevante SEO-Suchbegriffe und reichert diese mit Kennzahlen zur Schwierigkeit an .
+*   Automatisierte Generierung von qualitativ hochwertigen Blogbeitrags-Entwürfen in festen Blöcken (inklusive Bildern) durch den Einsatz von Künstlicher Intelligenz .
+*   Zentrale Speicherung aller Entwürfe und Suchbegriffe in einer Datenbank, sodass die Kunden-Websites freigegebene Beiträge völlig automatisiert beziehen und sofort anzeigen können .
