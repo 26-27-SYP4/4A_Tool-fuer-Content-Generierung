@@ -15,10 +15,10 @@ Wir entwickeln ein zweiteiliges System basierend auf einem zentralen Supabase-Ba
 * **Backend & Infrastruktur:** Ein eigens eingerichtetes Supabase-Projekt für die PostgreSQL-Datenbank, Supabase Auth (für den sicheren Login) und den Storage-Bucket `blog-images`[cite: 2].
 * **KI & Content:** Gemini API für die Erstellung von Unternehmensprofil, Startbegriffen, JSON-strukturierten Texten und Symbolbildern[cite: 2].
 * **SEO-Metriken:** Mangools API (`/kwfinder/related-keywords` und `/kwfinder/serps`) für verwandte Keywords, Suchvolumen (`sv`) und Schwierigkeit (`seo` bzw. `serp.rank`)[cite: 2].
+* * **Datenbank-Client:** `@supabase/supabase-js` für die direkte Kommunikation zwischen den Next.js-Anwendungen und dem Backend 
 
 ### Unsere Entscheidungen (Zur Umsetzung der Vorgaben)
-* **Datenbank-Client:** `@supabase/supabase-js` für die direkte Kommunikation zwischen den Next.js-Anwendungen und dem Backend (wird in der Vorgabe bereits als ideales Beispiel genannt)[cite: 2].
-* **HTML-Parser (Crawler):** `cheerio`, um ressourcenschonend `<title>`, Überschriften (`<h1>` bis `<h3>`) und den Haupttext aus den Kunden-Websites zu extrahieren, ohne unnötiges HTML wie `<script>` oder `<style>` mitzuschleppen[cite: 2].
+* **Crawler):** `cheerio`, um ressourcenschonend `<title>`, Überschriften (`<h1>` bis `<h3>`) und den Haupttext aus den Kunden-Websites zu extrahieren, ohne unnötiges HTML wie `<script>` oder `<style>` mitzuschleppen[cite: 2].
 * **Bildkonvertierung:** `sharp`, um die von Gemini generierten Bilder direkt auf dem Node-Server in das zwingend geforderte WebP-Format umzuwandeln und auf 800px sowie 1600px zu skalieren[cite: 2].
 * **JSON-Validierung:** `zod`, um die von der KI gelieferten Antworten strikt gegen das geforderte Schema abzusichern (z.B. ob wirklich nur die 5 erlaubten Block-Typen verwendet wurden), bevor ungültige Daten in die Datenbank geschrieben werden[cite: 2].
 
