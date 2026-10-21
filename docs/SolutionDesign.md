@@ -54,4 +54,4 @@ Um Server-Timeouts zu verhindern, wird der große Ablauf in fünf Schritte in de
 * **Etappe 2: Profiling:** Das Tool schickt die Rohtexte an Gemini (Prompt 1), um Zielgruppe, Leistungen und Startbegriffe als JSON zu generieren.
 * **Etappe 3: Keyword-Recherche:** Das Tool fragt die Mangools API nach verwandten Keywords zu den Startbegriffen. Danach filtert das Tool im Code unpassende Begriffe (Volumen < 20, Konkurrenz, Kaufabsicht) automatisch aus.
 * **Etappe 4: Content-Generierung:** Die verbleibenden Keywords gehen an Gemini (Prompt 2). Gemini wählt die stärksten Keywords, schreibt den Beitrag (bestehend aus max. 5 Block-Typen) und liefert Bildbeschreibungen. Die Bilder werden erzeugt und im Supabase-Storage gespeichert.
-* **Etappe 5: Editor & Freigabe:** Der Nutzer kann zwischen mehreren Entwürfen auswählen. Ein Klick auf "Veröffentlichen" ändert den Status in der Datenbank. Die Testseite zeigt den Beitrag ab diesem Moment automatisch an.
+* **Etappe 5: Editor & Freigabe:** Der Nutzer kann zwischen mehreren Entwürfen auswählen. Ein Klick auf "Veröffentlichen" ändert den Status in der Datenbank. Die Testseite zeigt den Beitrag ab diesem Moment automatisch an.]
