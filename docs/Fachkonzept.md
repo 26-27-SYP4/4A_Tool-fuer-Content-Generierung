@@ -23,3 +23,28 @@ Das Ziel ist ein Tool, das diese Schritte automatisiert. Der Mitarbeiter soll nu
 *   Das System leitet aus diesen Informationen das Firmenprofil ab, findet automatisch relevante SEO-Suchbegriffe und reichert diese mit Kennzahlen zur Wichtigkeit an .
 *   Automatisierte Generierung von qualitativ hochwertigen Blogbeitrags-Entwürfen in festen Blöcken (inklusive Bildern) durch den Einsatz von Künstlicher Intelligenz .
 *   Zentrale Speicherung aller Entwürfe und Suchbegriffe in einer Datenbank, sodass die Kunden-Websites freigegebene Beiträge völlig automatisiert beziehen und sofort anzeigen können .
+
+## 2. Akteure und Zielgruppen (User Roles)
+*   **Content-Manager (KRUG):** Bedient das System, gibt URLs ein, prüft KI-Entwürfe und gibt diese für die Kunden frei.
+*   **System-Administrator:** Verwaltet die API-Schlüssel (LLM, Mangools) und überwacht die entstandenen Schnittstellen-Kosten.
+  
+## 3. Systemarchitektur & Schnittstellen
+*   **Frontend/UI:** Web-Oberfläche für die Mitarbeiter.
+*   **Backend/Datenbank:** Supabase (PostgreSQL) zur zentralen Speicherung von Kunden, gecrawlten Texten (.md Files), Keywords und Blog-Entwürfen.
+*   **Externe APIs:**
+    *   Mangools API (SEO-Daten & Keyword-Recherche).
+    *   LLM-API zur Texterstellung.
+
+## 4. Grobes Datenmodell
+*   **Kunde / Projekt:** ID, Basis-URL, Firmenname.
+*   **Keyword:** ID, Projekt_ID, Begriff, Suchvolumen, Relevanz-Score.
+*   **Blogbeitrag:** ID, Projekt_ID, Titel, Inhalt (Markdown/HTML), Status (Entwurf/Freigegeben), Erstellungsdatum.
+
+## 5. Benutzeroberfläche (UI / UX Konzept)
+*   **Projekt-Dashboard:** Übersicht aller Kunden-URLs und des aktuellen Generierungs-Status.
+*   **Detail-Ansicht:** Eingabefeld für neue URLs, Liste der analysierten Keywords mit deren Wichtigkeit.
+*   **Editor-Ansicht:** Eine Oberfläche, in der der Mitarbeiter den KI-generierten Text prüfen, anpassen und den Freigabe-Button drücken kann.
+
+## 6. Abnahmekriterien (Scope)
+*   **In Scope:** Ein funktionierender Prototyp, der den gesamten Workflow von der URL-Eingabe, über die Mangools-Abfrage bis zur Speicherung des fertigen Beitrags in der Supabase-Datenbank automatisiert.
+*   **Out of Scope:** Die direkte Integration und Darstellung der Beiträge auf den tatsächlichen CMS-Systemen (WordPress etc.) der Endkunden ist nicht Teil dieses Projekts.
