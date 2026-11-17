@@ -32,3 +32,9 @@
 * **Externe APIs:** Für die SEO-Daten  wird die Mangools API verwendet. Die Texterstellung  sowie die Generierung von Symbolbildern übernimmt die Gemini API.
 * **Hilfs-Bibliotheken:** Für den Ressourcen-schonenden Web-Crawler wird `cheerio` eingesetzt. Generierte Bilder müssen serverseitig über `sharp` in das WebP-Format konvertiert und auf 800px sowie 1600px skaliert werden. Um strikte KI-Antworten sicherzustellen, wird das JSON-Schema über `zod` validiert.
 * **Sicherheit & Konfiguration:** API-Schlüssel und Passwörter dürfen niemals in den Quellcode geschrieben werden, sondern werden ausschließlich über lokale Umgebungsvariablen (`.env.local`) verwaltet
+
+## 5. Entwicklungs-Prozess 
+* **Git-Workflow & Branching:** Es gibt keine direkten Commits auf den `main`-Branch . Features werden zwingend in eigenen Branches entwickelt und über Pull Requests (PRs) zusammengeführt .
+* **Code-Reviews:** Jeder Pull Request durchläuft ein zweistufiges Review: Zuerst prüft der Autor seine Änderungen mithilfe von KI, danach muss ein anderes Teammitglied den Code lesen, testen und freigeben .
+* **Umgang mit KI:** Es gilt der Projektsatz "Verstehen vor Übernehmen" . KI-generierter Code muss lokal ausgeführt und verstanden werden, bevor er gepusht wird . Die Vorgaben von KRUG schlagen dabei immer abweichende KI-Vorschläge .
+* **Deployment (CI/CD):** Das Hosting erfolgt über Cloudflare Pages[cite: 5]. Der Workflow ist automatisiert: Jeder Push in den `main`-Branch aktualisiert automatisch die Live-Website.
