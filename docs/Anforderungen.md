@@ -23,3 +23,12 @@
 *   **Fehler- & Inhaltskontrolle:** Bei fehlschlagenden API-Abfragen (z.B. ungültiges JSON der KI oder Mangools Rate-Limits) führt das System automatische Wiederholungsversuche durch, bevor es dem Nutzer einen Fehler meldet. Die KI muss im österreichischen Deutsch schreiben und darf keine Fakten erfinden.
 *   **Infrastruktur & Sicherheit:** Alle API-Keys und sensiblen Konfigurationen werden ausschließlich über Umgebungsvariablen  verwaltet. Beide Anwendungen müssen mit Standard-Befehlen lauffähig sein.
 *   **Lieferobjekte:** Der Quellcode ist übersichtlich in die Bereiche `tool/`, `testseite/` und `supabase/` zu strukturieren. Supabase-Datenbankmigrationen und eine Projektdokumentation (`README.md`) sind Teil der Abgabe.
+
+
+## 4.Technische Rahmenbedingungen
+
+* **Frontend-Technologien:** Das Tool  und die Testseite  müssen zwingend als Next.js mit TypeScript entwickelt werden. Als Build-Adapter für das Hosting kommt `@opennextjs/cloudflare` zum Einsatz.
+* **Backend & Datenbank:** Als Backend dient ein  Supabase-DB. Dieses nutzt PostgreSQL für die relationale Datenhaltung , Supabase Auth für den sicheren Tool-Login und Supabase Storage  für generierte Medien. Die Client-Kommunikation erfolgt über `@supabase/supabase-js`[cite: 1].
+* **Externe APIs:** Für die SEO-Daten  wird die Mangools API verwendet. Die Texterstellung  sowie die Generierung von Symbolbildern übernimmt die Gemini API.
+* **Hilfs-Bibliotheken:** Für den Ressourcen-schonenden Web-Crawler wird `cheerio` eingesetzt. Generierte Bilder müssen serverseitig über `sharp` in das WebP-Format konvertiert und auf 800px sowie 1600px skaliert werden. Um strikte KI-Antworten sicherzustellen, wird das JSON-Schema über `zod` validiert.
+* **Sicherheit & Konfiguration:** API-Schlüssel und Passwörter dürfen niemals in den Quellcode geschrieben werden, sondern werden ausschließlich über lokale Umgebungsvariablen (`.env.local`) verwaltet
