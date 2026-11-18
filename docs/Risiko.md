@@ -1,0 +1,9 @@
+# Risikoanalyse: SEO-Blog-Tool
+
+| Ziel | Risiko | Wahrscheinlichkeit | Impact | Lösung |
+| :--- | :--- | :--- | :--- | :--- |
+| **Kosteneffizienz & Systemstabilität** | Überschreitung der Mangools API-Limits (Rate Limits oder Credit Limits). | Mittel | Hoch | Implementierung von automatischen Warteschleifen bei HTTP 429 (`retry_after`). Code-seitige Filterung der Keywords (Volumen < 20, Kaufabsicht etc.), um API-Aufrufe auf max. 9 pro Durchlauf zu begrenzen. Bei Credit-Limit: Harter Abbruch mit UI-Meldung. |
+| **Wahrheitstreue & Authentizität** | KI (Gemini) "halluziniert" und erfindet Fakten, Preise oder Auszeichnungen, die nicht auf der Kunden-Website stehen. | Mittel | Hoch | Strikte Vorgaben in den Prompts (System Instructions), die das Erfinden von Fakten explizit verbieten. Obligatorische Freigabe durch den Content-Manager (KRUG) im Editor vor Veröffentlichung. |
+| **Stabilität der UI & Datenkonsistenz** | Gemini liefert ungültiges JSON oder verwendet unerlaubte Beitragsblöcke (nicht aus dem vorgegebenen Schema). | Niedrig | Mittel | Strikte Validierung der KI-Antworten mit `zod`. Bei einem Fehler wird die Anfrage maximal einmal automatisch wiederholt, bevor der Nutzer eine Fehlermeldung erhält. |
+| **Ressourcenschonendes Crawlen** | Der Web-Crawler überlastet die Kunden-Website (DoS-Gefahr) oder liest versteckte Seiten ein. | Niedrig | Mittel | Hard-Limit auf maximal 50 Seiten. Strikte Beachtung der `robots.txt` und Implementierung eines Throttles (maximal 1 Anfrage pro Sekunde). |
+| **Erfolgreiches Hosting auf Cloudflare** | Next.js-Frontend lässt sich nicht auf Cloudflare Pages deployen (Edge-Worker Limitierungen). | Niedrig | Mittel | Nutzung des zwingend geforderten Build-Adapters `@opennextjs/cloudflare` sowie Testen der Applikation im lokalen Preview-Modus, um Edge-Kompatibilität frühzeitig sicherzustellen. |
